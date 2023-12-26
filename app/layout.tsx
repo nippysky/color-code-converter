@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
+import { ContextColorProvider } from "@/lib/context/ColorContext";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -55,7 +56,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={poppins.className}>
-      <body>{children}</body>
+      <ContextColorProvider>
+        <body>{children}</body>
+      </ContextColorProvider>
     </html>
   );
 }
