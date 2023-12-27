@@ -1,17 +1,24 @@
 "use client";
 
-import React, { useState } from "react";
+import { setRandomColor } from "@/lib/redux/action";
+import { rgbStringToHex } from "@/lib/utils/rgbToHex";
+import React, { useEffect, useState } from "react";
 import { IoCopy } from "react-icons/io5";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function MainApp() {
+  const dispatch = useDispatch();
   // @ts-ignore
-  const randomColor = useSelector((state) => state.color.randomColor);
+  const randomColor: string = useSelector((state) => state.color.randomColor);
+  //@ts-ignore
+  const rgbColor: string = useSelector((state) => state.color.rgbColor);
+  //@ts-ignore
+  const cmykColor: string = useSelector((state) => state.color.cmykColor);
 
   const [colors, setColors] = useState({
-    hex: "",
-    rgb: "",
-    cmyk: "",
+    hex: randomColor,
+    rgb: rgbColor,
+    cmyk: cmykColor,
   });
 
   const handleChange = (
@@ -23,6 +30,29 @@ export default function MainApp() {
       [name]: value,
     }));
   };
+
+  useEffect(() => {
+    if (
+      (colors.hex.length === 4 || colors.hex.length === 7) &&
+      /^[0-9A-F#]+$/i.test(colors.hex)
+    ) {
+      dispatch(setRandomColor(colors.hex));
+    }
+  }, [colors]);
+
+  const handlergbFocus = () => {
+    const isValidRGB = (value: string) => {
+      const rgbRegex = /^rgb\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\)$/;
+
+      return rgbRegex.test(value);
+    };
+
+    if (isValidRGB(colors.rgb)) {
+      const hexColor = rgbStringToHex(colors.rgb);
+      dispatch(setRandomColor(hexColor));
+    }
+  };
+
   return (
     <main className="w-full h-[80%] flex justify-center items-center bg-transparent lg:px-96 px-5 sm:px-14 md:px-36">
       <div className=" rounded-xl bg-white p-5 shadow-md w-full">
@@ -37,7 +67,7 @@ export default function MainApp() {
               type="text"
               name="hex"
               placeholder="Enter value or refresh"
-              value={colors.hex || randomColor}
+              value={colors.hex}
               onChange={handleChange}
               className=" focus:outline-none py-1 w-full placeholder:tracking-wide placeholder:text-[0.85rem]"
             />
@@ -59,6 +89,7 @@ export default function MainApp() {
               placeholder="Enter value or refresh"
               value={colors.rgb}
               onChange={handleChange}
+              onFocus={handlergbFocus}
               className=" focus:outline-none py-1 w-full placeholder:tracking-wide placeholder:text-[0.85rem]"
             />
             <button className=" hover:opacity-75">
@@ -67,7 +98,7 @@ export default function MainApp() {
           </div>
         </div>
 
-        {/* cymk */}
+        {/* cmyk */}
         <div className="flex flex-col mb-8">
           <label className="text-gray-400 mb-1 text-[0.7rem]">
             CYMK eg: cmyk(0,0,0,0)

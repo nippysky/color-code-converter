@@ -14,6 +14,10 @@ export default function Home() {
   const randomColor = useSelector((state) => state.color.randomColor);
   //@ts-ignore
   const isColorSet = useSelector((state) => state.color.isColorSet);
+  //@ts-ignore
+  const rgbColor = useSelector((state) => state.color.rgbColor);
+  //@ts-ignore
+  const cmykColor = useSelector((state) => state.color.cmykColor);
 
   useEffect(() => {
     const color = getRandomHexColor();
@@ -25,7 +29,7 @@ export default function Home() {
   return isColorSet ? (
     <section
       className="w-full h-screen"
-      style={{ backgroundColor: randomColor }}
+      style={{ backgroundColor: randomColor || rgbColor || cmykColor }}
     >
       <div className="max-w-7xl mx-auto p-2 h-full flex flex-col gap-10 justify-between">
         {/* Header */}
