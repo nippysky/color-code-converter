@@ -1,11 +1,13 @@
 "use client";
 
-import { useContextColor } from "@/lib/context/ColorContext";
 import React, { useState } from "react";
 import { IoCopy } from "react-icons/io5";
+import { useSelector } from "react-redux";
 
 export default function MainApp() {
-  const { randomColor } = useContextColor();
+  // @ts-ignore
+  const randomColor = useSelector((state) => state.color.randomColor);
+
   const [colors, setColors] = useState({
     hex: "",
     rgb: "",

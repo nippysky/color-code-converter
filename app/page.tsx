@@ -3,11 +3,26 @@
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import MainApp from "@/components/MainApp";
-import { useContextColor } from "@/lib/context/ColorContext";
+import { setRandomColor } from "@/lib/redux/action";
+import { getRandomHexColor } from "@/lib/utils/randomHexColor";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function Home() {
-  const { randomColor } = useContextColor();
-  return (
+  const dispatch = useDispatch();
+  //@ts-ignore
+  const randomColor = useSelector((state) => state.color.randomColor);
+  //@ts-ignore
+  const isColorSet = useSelector((state) => state.color.isColorSet);
+
+  useEffect(() => {
+    const color = getRandomHexColor();
+
+    // Dispatch action to set the random color in Redux
+    dispatch(setRandomColor(color));
+  }, [dispatch]);
+
+  return isColorSet ? (
     <section
       className="w-full h-screen"
       style={{ backgroundColor: randomColor }}
@@ -23,5 +38,5 @@ export default function Home() {
         <Footer />
       </div>
     </section>
-  );
+  ) : null;
 }
