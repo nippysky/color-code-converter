@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import MainApp from "@/components/MainApp";
 import { setRandomColor } from "@/lib/redux/action";
-import { getRandomHexColor } from "@/lib/utils/randomHexColor";
+import { getRandomHexColor } from "@/lib/utils/colorConversion";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -29,7 +29,7 @@ export default function Home() {
   return isColorSet ? (
     <section
       className="w-full h-screen"
-      style={{ backgroundColor: randomColor || rgbColor || cmykColor }}
+      style={{ backgroundColor: randomColor }}
     >
       <div className="max-w-7xl mx-auto p-2 h-full flex flex-col gap-10 justify-between">
         {/* Header */}

@@ -1,7 +1,11 @@
 "use client";
 
 import { setRandomColor } from "@/lib/redux/action";
-import { rgbStringToHex } from "@/lib/utils/rgbToHex";
+import {
+  hexToRgb,
+  isRGBColorCode,
+  rgbStringToHex,
+} from "@/lib/utils/colorConversion";
 import React, { useEffect, useState } from "react";
 import { IoCopy } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
@@ -32,26 +36,20 @@ export default function MainApp() {
   };
 
   useEffect(() => {
-    if (
-      (colors.hex.length === 4 || colors.hex.length === 7) &&
-      /^[0-9A-F#]+$/i.test(colors.hex)
-    ) {
+    if (colors.hex.length === 7 && /^[0-9A-F#]+$/i.test(colors.hex)) {
+      const rgbColor = hexToRgb(colors.hex);
+      setColors({ ...colors, rgb: rgbColor! });
       dispatch(setRandomColor(colors.hex));
     }
-  }, [colors]);
+  }, [colors.hex]);
 
-  const handlergbFocus = () => {
-    const isValidRGB = (value: string) => {
-      const rgbRegex = /^rgb\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\)$/;
-
-      return rgbRegex.test(value);
-    };
-
-    if (isValidRGB(colors.rgb)) {
+  useEffect(() => {
+    if (isRGBColorCode(colors.rgb)) {
       const hexColor = rgbStringToHex(colors.rgb);
+      setColors({ ...colors, hex: hexColor! });
       dispatch(setRandomColor(hexColor));
     }
-  };
+  }, [colors.rgb]);
 
   return (
     <main className="w-full h-[80%] flex justify-center items-center bg-transparent lg:px-96 px-5 sm:px-14 md:px-36">
@@ -69,6 +67,7 @@ export default function MainApp() {
               placeholder="Enter value or refresh"
               value={colors.hex}
               onChange={handleChange}
+              // onFocus={() => setColors({ ...colors, hex: "" })}
               className=" focus:outline-none py-1 w-full placeholder:tracking-wide placeholder:text-[0.85rem]"
             />
             <button className=" hover:opacity-75">
@@ -89,7 +88,7 @@ export default function MainApp() {
               placeholder="Enter value or refresh"
               value={colors.rgb}
               onChange={handleChange}
-              onFocus={handlergbFocus}
+              // onFocus={() => setColors({ ...colors, rgb: "" })}
               className=" focus:outline-none py-1 w-full placeholder:tracking-wide placeholder:text-[0.85rem]"
             />
             <button className=" hover:opacity-75">
@@ -110,6 +109,7 @@ export default function MainApp() {
               placeholder="Enter value or refresh"
               value={colors.cmyk}
               onChange={handleChange}
+              // onFocus={() => setColors({ ...colors, cmyk: "" })}
               className=" focus:outline-none py-1 w-full placeholder:tracking-wide placeholder:text-[0.85rem]"
             />
             <button className=" hover:opacity-75">
