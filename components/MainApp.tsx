@@ -2,9 +2,14 @@
 
 import { setRandomColor } from "@/lib/redux/action";
 import {
+  cmykToHex,
+  cmykToRgb,
+  hexToCmyk,
   hexToRgb,
   isRGBColorCode,
+  isValidCmykColorCode,
   rgbStringToHex,
+  rgbToCmyk,
 } from "@/lib/utils/colorConversion";
 import React, { useEffect, useState } from "react";
 import { IoCopy } from "react-icons/io5";
@@ -38,7 +43,8 @@ export default function MainApp() {
   useEffect(() => {
     if (colors.hex.length === 7 && /^[0-9A-F#]+$/i.test(colors.hex)) {
       const rgbColor = hexToRgb(colors.hex);
-      setColors({ ...colors, rgb: rgbColor! });
+      const cmykColor = hexToCmyk(colors.hex);
+      setColors({ ...colors, rgb: rgbColor!, cmyk: cmykColor! });
       dispatch(setRandomColor(colors.hex));
     }
   }, [colors.hex]);
@@ -46,10 +52,20 @@ export default function MainApp() {
   useEffect(() => {
     if (isRGBColorCode(colors.rgb)) {
       const hexColor = rgbStringToHex(colors.rgb);
-      setColors({ ...colors, hex: hexColor! });
+      const cmykColor = rgbToCmyk(colors.rgb);
+      setColors({ ...colors, hex: hexColor!, cmyk: cmykColor! });
       dispatch(setRandomColor(hexColor));
     }
   }, [colors.rgb]);
+
+  useEffect(() => {
+    if (isValidCmykColorCode(colors.cmyk)) {
+      const hexColor = cmykToHex(colors.cmyk);
+      const rgbColor = cmykToRgb(colors.cmyk);
+      setColors({ ...colors, hex: hexColor!, rgb: rgbColor! });
+      dispatch(setRandomColor(hexColor));
+    }
+  }, [colors.cmyk]);
 
   return (
     <main className="w-full h-[80%] flex justify-center items-center bg-transparent lg:px-96 px-5 sm:px-14 md:px-36">
@@ -100,7 +116,7 @@ export default function MainApp() {
         {/* cmyk */}
         <div className="flex flex-col mb-8">
           <label className="text-gray-400 mb-1 text-[0.7rem]">
-            CYMK eg: cmyk(0,0,0,0)
+            CMYK eg: cmyk(0%,0%,0%,0%)
           </label>
           <div className="relative flex items-center border-b border-black">
             <input
