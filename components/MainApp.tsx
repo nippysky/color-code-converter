@@ -11,11 +11,14 @@ import {
   rgbStringToHex,
   rgbToCmyk,
 } from "@/lib/utils/colorConversion";
+import { handleCopy } from "@/lib/utils/copyToClipboard";
 import React, { useEffect, useState } from "react";
-import { IoCopy } from "react-icons/io5";
+import { IoCopy, IoCheckmarkDone } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function MainApp() {
+  const [iconClicked, setIconClicked] = useState([false, false, false]);
+
   const dispatch = useDispatch();
   // @ts-ignore
   const randomColor: string = useSelector((state) => state.color.randomColor);
@@ -67,8 +70,31 @@ export default function MainApp() {
     }
   }, [colors.cmyk]);
 
+  const handleIconClick = (index: number) => {
+    // Create a copy of the current state array
+    const updatedIconClicked = [...iconClicked];
+
+    // Set the clicked state to true for the specific button
+    updatedIconClicked[index] = true;
+
+    // Update the state with the new array
+    setIconClicked(updatedIconClicked);
+
+    // Use setTimeout to reset the clicked state after 2000 milliseconds (2 seconds)
+    setTimeout(() => {
+      // Create another copy of the array to avoid mutating state directly
+      const resetIconClicked = [...updatedIconClicked];
+
+      // Reset the clicked state to false for the specific button
+      resetIconClicked[index] = false;
+
+      // Update the state with the new array
+      setIconClicked(resetIconClicked);
+    }, 1000);
+  };
+
   return (
-    <main className="w-full h-[80%] flex justify-center items-center bg-transparent lg:px-96 px-5 sm:px-14 md:px-36">
+    <main className="w-full h-[90%] flex justify-center items-center bg-transparent lg:px-96 px-5 sm:px-14 md:px-36">
       <div className=" rounded-xl bg-white p-5 shadow-md w-full">
         {/* INPUTS */}
         {/* Hex */}
@@ -76,7 +102,14 @@ export default function MainApp() {
           <label className="text-gray-400 mb-1 text-[0.7rem]">
             HEX eg: #ffffff
           </label>
-          <div className="relative flex items-center border-b border-black">
+          <div
+            className={`relative flex items-center`}
+            style={{
+              borderBottom: `1px solid ${
+                randomColor === "#FFFFFF" ? "#000" : randomColor
+              }`,
+            }}
+          >
             <input
               type="text"
               name="hex"
@@ -86,8 +119,24 @@ export default function MainApp() {
               // onFocus={() => setColors({ ...colors, hex: "" })}
               className=" focus:outline-none py-1 w-full placeholder:tracking-wide placeholder:text-[0.85rem]"
             />
-            <button className=" hover:opacity-75">
-              <IoCopy size={20} />
+            <button
+              className=" hover:opacity-75"
+              onClick={() => {
+                handleCopy(colors.hex);
+                handleIconClick(0);
+              }}
+            >
+              {iconClicked[0] ? (
+                <IoCheckmarkDone
+                  size={20}
+                  color={randomColor === "#FFFFFF" ? "#000" : randomColor}
+                />
+              ) : (
+                <IoCopy
+                  size={20}
+                  color={randomColor === "#FFFFFF" ? "#000" : randomColor}
+                />
+              )}
             </button>
           </div>
         </div>
@@ -97,7 +146,14 @@ export default function MainApp() {
           <label className="text-gray-400 mb-1 text-[0.7rem]">
             RGB eg: rgb(255,255,255)
           </label>
-          <div className="relative flex items-center border-b border-black">
+          <div
+            className={`relative flex items-center`}
+            style={{
+              borderBottom: `1px solid ${
+                randomColor === "#FFFFFF" ? "#000" : randomColor
+              }`,
+            }}
+          >
             <input
               type="text"
               name="rgb"
@@ -107,8 +163,24 @@ export default function MainApp() {
               // onFocus={() => setColors({ ...colors, rgb: "" })}
               className=" focus:outline-none py-1 w-full placeholder:tracking-wide placeholder:text-[0.85rem]"
             />
-            <button className=" hover:opacity-75">
-              <IoCopy size={20} />
+            <button
+              className=" hover:opacity-75"
+              onClick={() => {
+                handleCopy(colors.rgb);
+                handleIconClick(1);
+              }}
+            >
+              {iconClicked[1] ? (
+                <IoCheckmarkDone
+                  size={20}
+                  color={randomColor === "#FFFFFF" ? "#000" : randomColor}
+                />
+              ) : (
+                <IoCopy
+                  size={20}
+                  color={randomColor === "#FFFFFF" ? "#000" : randomColor}
+                />
+              )}
             </button>
           </div>
         </div>
@@ -118,7 +190,14 @@ export default function MainApp() {
           <label className="text-gray-400 mb-1 text-[0.7rem]">
             CMYK eg: cmyk(0%,0%,0%,0%)
           </label>
-          <div className="relative flex items-center border-b border-black">
+          <div
+            className={`relative flex items-center`}
+            style={{
+              borderBottom: `1px solid ${
+                randomColor === "#FFFFFF" ? "#000" : randomColor
+              }`,
+            }}
+          >
             <input
               type="text"
               name="cmyk"
@@ -128,8 +207,24 @@ export default function MainApp() {
               // onFocus={() => setColors({ ...colors, cmyk: "" })}
               className=" focus:outline-none py-1 w-full placeholder:tracking-wide placeholder:text-[0.85rem]"
             />
-            <button className=" hover:opacity-75">
-              <IoCopy size={20} />
+            <button
+              className=" hover:opacity-75"
+              onClick={() => {
+                handleCopy(colors.cmyk);
+                handleIconClick(2);
+              }}
+            >
+              {iconClicked[2] ? (
+                <IoCheckmarkDone
+                  size={20}
+                  color={randomColor === "#FFFFFF" ? "#000" : randomColor}
+                />
+              ) : (
+                <IoCopy
+                  size={20}
+                  color={randomColor === "#FFFFFF" ? "#000" : randomColor}
+                />
+              )}
             </button>
           </div>
         </div>
